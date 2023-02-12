@@ -8,10 +8,10 @@ const PlayBoard = () => {
   const [enemyHP, setEnemyHP] = useState(40);
 
   return (
-    <div>
+    <>
       <Player hp={playerHP} />
       <Enemy hp={enemyHP} />
-    </div>
+    </>
   );
 };
 
