@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Player from "./components/Player";
 import Enemy from "./components/Enemy";
+import Hand from "./components/Hand";
 // import "./PlayBoard.css";
 
 const PlayBoard = () => {
@@ -11,6 +12,7 @@ const PlayBoard = () => {
     <>
       <Player hp={playerHP} />
       <Enemy hp={enemyHP} />
+      <Hand />
     </>
   );
 };
