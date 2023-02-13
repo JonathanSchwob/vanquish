@@ -2,16 +2,21 @@ import { useState } from "react";
 import Player from "./components/Player";
 import Enemy from "./components/Enemy";
 import Hand from "./components/Hand";
-// import "./PlayBoard.css";
 
 const PlayBoard = () => {
-  const [playerHP, setPlayerHP] = useState(50);
-  const [enemyHP, setEnemyHP] = useState(40);
+  const [playerHp, setPlayerHp] = useState(50);
+  const [enemyHp, setEnemyHp] = useState(40);
+  const [handSize, setHandSize] = useState(8);
+
+  const cardClick = () => {
+    const temp = enemyHp - 8;
+    setEnemyHp(temp);
+  };
 
   return (
     <>
-      <Player hp={playerHP} />
-      <Enemy hp={enemyHP} />
+      <Player hp={playerHp} />
+      <Enemy hp={enemyHp} />
       <Hand />
     </>
   );
@@ -19,10 +24,6 @@ const PlayBoard = () => {
 
 export default PlayBoard;
 
-// player
-// enemy
-// hand
-//   -cards
-// deck
-// graveyard
-// turn system
+// click card
+// card gets put into discard pile
+// card effect occurs on enemy
