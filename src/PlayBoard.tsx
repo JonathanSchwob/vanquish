@@ -17,7 +17,7 @@ const PlayBoard = () => {
     <>
       <Player hp={playerHp} />
       <Enemy hp={enemyHp} />
-      <Hand />
+      <Hand cardClick={cardClick} />
     </>
   );
 };
