@@ -3,6 +3,12 @@ import Player from "./components/Player";
 import Enemy from "./components/Enemy";
 import Hand from "./components/Hand";
 
+type CardType = {
+  name: string;
+  id: number;
+  stats: number;
+};
+
 const PlayBoard = () => {
   //player
   const [playerHp, setPlayerHp] = useState(50);
@@ -11,8 +17,9 @@ const PlayBoard = () => {
   const [enemyHp, setEnemyHp] = useState(40);
   const [enemyBlock, setEnemyBlock] = useState(0);
   //discard
-  const [discardPile, setDiscardPile] = useState([]);
+  const [discardPile, setDiscardPile] = useState<CardType[]>([]);
   //hand
+  const maxHandSize = 10;
   const [handSize, setHandSize] = useState(8);
   const [handCards, setHandCards] = useState([
     {
@@ -38,14 +45,26 @@ const PlayBoard = () => {
   ]);
 
   const cardClick = (id: number) => {
-    console.log(id);
-    setHandCards((handCards) => handCards.filter((item) => item.id != id));
-    setEnemyHp((enemyHp) => enemyHp - 8);
+    const newDiscardPile = [...discardPile];
+    const clickedCard = handCards.find((card) => card.id === id);
+    console.log(clickedCard, "clik");
+    if (clickedCard) {
+      if (clickedCard.name === "Attack") {
+        setEnemyHp((enemyHp) => enemyHp - clickedCard.stats);
+      }
+      if (clickedCard.name === "Defend") {
+        setPlayerBlock((playerBlock) => playerBlock + clickedCard.stats);
+      }
+      //discard
+      newDiscardPile.push(clickedCard);
+    }
+    setDiscardPile(newDiscardPile);
+    setHandCards((handCards) => handCards.filter((card) => card.id != id));
   };
 
   return (
     <>
-      <Player hp={playerHp} />
+      <Player hp={playerHp} block={playerBlock} />
       <Enemy hp={enemyHp} />
       <Hand cards={handCards} cardClick={cardClick} />
     </>
