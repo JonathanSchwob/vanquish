@@ -1,2 +1,3 @@
 # vanquish
-sts style card game using ts+react+vite
+
+sts style card game using react-typescript-vite-tailwind

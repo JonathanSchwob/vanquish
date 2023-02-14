@@ -10,21 +10,36 @@ const PlayBoard = () => {
   //enemy
   const [enemyHp, setEnemyHp] = useState(40);
   const [enemyBlock, setEnemyBlock] = useState(0);
+  //discard
+  const [discardPile, setDiscardPile] = useState([]);
   //hand
   const [handSize, setHandSize] = useState(8);
-  const [handCardStrings, setHandCardStrings] = useState([
-    "Attack",
-    "Defend",
-    "Attack",
-    "Defend",
-    "Attack",
+  const [handCards, setHandCards] = useState([
+    {
+      name: "Attack",
+      id: 0,
+      stats: 8,
+    },
+    {
+      name: "Attack",
+      id: 3,
+      stats: 8,
+    },
+    {
+      name: "Defend",
+      id: 9,
+      stats: 4,
+    },
+    {
+      name: "Attack",
+      id: 20,
+      stats: 8,
+    },
   ]);
 
-  const cardClick = (position: number) => {
-    setHandCardStrings((handCardStrings) =>
-      handCardStrings.filter((item, index) => index !== position)
-    );
-    //discard()
+  const cardClick = (id: number) => {
+    console.log(id);
+    setHandCards((handCards) => handCards.filter((item) => item.id != id));
     setEnemyHp((enemyHp) => enemyHp - 8);
   };
 
@@ -32,7 +47,7 @@ const PlayBoard = () => {
     <>
       <Player hp={playerHp} />
       <Enemy hp={enemyHp} />
-      <Hand cards={handCardStrings} cardClick={cardClick} />
+      <Hand cards={handCards} cardClick={cardClick} />
     </>
   );
 };
