@@ -4,20 +4,35 @@ import Enemy from "./components/Enemy";
 import Hand from "./components/Hand";
 
 const PlayBoard = () => {
+  //player
   const [playerHp, setPlayerHp] = useState(50);
+  const [playerBlock, setPlayerBlock] = useState(0);
+  //enemy
   const [enemyHp, setEnemyHp] = useState(40);
+  const [enemyBlock, setEnemyBlock] = useState(0);
+  //hand
   const [handSize, setHandSize] = useState(8);
+  const [handCardStrings, setHandCardStrings] = useState([
+    "Attack",
+    "Defend",
+    "Attack",
+    "Defend",
+    "Attack",
+  ]);
 
-  const cardClick = () => {
-    const temp = enemyHp - 8;
-    setEnemyHp(temp);
+  const cardClick = (position: number) => {
+    setHandCardStrings((handCardStrings) =>
+      handCardStrings.filter((item, index) => index !== position)
+    );
+    //discard()
+    setEnemyHp((enemyHp) => enemyHp - 8);
   };
 
   return (
     <>
       <Player hp={playerHp} />
       <Enemy hp={enemyHp} />
-      <Hand cardClick={cardClick} />
+      <Hand cards={handCardStrings} cardClick={cardClick} />
     </>
   );
 };

@@ -1,10 +1,11 @@
 type AttackProps = {
-  click: (event: React.MouseEvent<HTMLElement>) => void;
+  click(position: number): void;
+  position: number;
 };
 
-const Attack = ({ click }: AttackProps) => {
+const Attack = ({ click, position }: AttackProps) => {
   return (
-    <button onClick={click}>
+    <button onClick={() => click(position)}>
       <span className="text-lg">Attack</span>
       <span className="block text-sm">Deal 8 damage</span>
     </button>
