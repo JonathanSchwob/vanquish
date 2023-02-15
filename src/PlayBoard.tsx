@@ -85,7 +85,7 @@ const PlayBoard = () => {
     <>
       <DrawDeck cards={deckCards} />
       <Player hp={playerHp} block={playerBlock} />
-      <Enemy hp={enemyHp} />
+      <Enemy hp={enemyHp} block={enemyBlock} />
       <Hand cards={handCards} cardClick={cardClick} />
       <DiscardDeck cards={discardCards} />
     </>

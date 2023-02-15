@@ -7,7 +7,7 @@ type HandProps = {
 };
 
 const Hand = ({ cardClick, cards }: HandProps) => {
-  const renderCards = cards.map((card, index) => {
+  const renderCards = cards.map((card) => {
     if (card.name === "Attack")
       return <Attack key={card.id} id={card.id} click={cardClick} />;
     if (card.name === "Defend")
