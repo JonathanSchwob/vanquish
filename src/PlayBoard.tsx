@@ -17,11 +17,18 @@ type CardType = {
 //TODO draw deck features
 //TODO discard deck features
 //TODO pick phase
-//TODO find out if routing or conditional rendering or useEffects should be used to transition between PickPhase an PlayPhase
+//TODO react router for PickPhase and PlayPhase
 //TODO stop hardcoding cards
+//TODO more cards
 //TODO exhaust deck
+//TODO more enemies - never ending?
+//TODO relic rewards
+//TODO characters
+//TODO high score leaderboard
+//TODO brainstorm altering the game design
 
 const PlayBoard = () => {
+  const [playerEnergy, setPlayerEnergy] = useState(3);
   const [playerHp, setPlayerHp] = useState(50);
   const [playerBlock, setPlayerBlock] = useState(0);
   const [enemyHp, setEnemyHp] = useState(40);
@@ -45,27 +52,33 @@ const PlayBoard = () => {
       name: "Attack",
       id: 0,
       stats: 8,
+      energy: 1,
     },
     {
       name: "Attack",
       id: 3,
       stats: 8,
+      energy: 1,
     },
     {
       name: "Defend",
       id: 9,
       stats: 4,
+      energy: 1,
     },
     {
       name: "Attack",
       id: 20,
       stats: 8,
+      energy: 1,
     },
   ]);
 
   const cardClick = (id: number) => {
+    if (playerEnergy <= 0) return;
     const newDiscardDeck = [...discardCards];
     const clickedCard = handCards.find((card) => card.id === id);
+
     if (clickedCard) {
       //play card
       if (clickedCard.name === "Attack") {
@@ -76,13 +89,16 @@ const PlayBoard = () => {
       }
       //discard
       newDiscardDeck.push(clickedCard);
+      setPlayerEnergy((playerEnergy) => playerEnergy - clickedCard.energy);
     }
-    setDiscardCards(newDiscardDeck);
+
     setHandCards((handCards) => handCards.filter((card) => card.id != id));
+    setDiscardCards(newDiscardDeck);
   };
 
   return (
     <>
+      <span className="absolute left-7">Energy: {playerEnergy}</span>
       <DrawDeck cards={deckCards} />
       <Player hp={playerHp} block={playerBlock} />
       <Enemy hp={enemyHp} block={enemyBlock} />
