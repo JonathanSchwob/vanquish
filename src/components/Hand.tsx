@@ -3,7 +3,7 @@ import Defend from "./cards/Defend";
 
 type HandProps = {
   cardClick(id: number): void;
-  cards: { name: string; id: number }[];
+  cards: { name: string; id: number; stats: number }[];
 };
 
 const Hand = ({ cardClick, cards }: HandProps) => {

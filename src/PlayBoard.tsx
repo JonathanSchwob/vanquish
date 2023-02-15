@@ -2,6 +2,7 @@ import { useState } from "react";
 import Player from "./components/Player";
 import Enemy from "./components/Enemy";
 import Hand from "./components/Hand";
+import DiscardPile from "./components/DiscardPile";
 
 type CardType = {
   name: string;
@@ -16,11 +17,9 @@ const PlayBoard = () => {
   //enemy
   const [enemyHp, setEnemyHp] = useState(40);
   const [enemyBlock, setEnemyBlock] = useState(0);
-  //discard
-  const [discardPile, setDiscardPile] = useState<CardType[]>([]);
-  //hand
-  const maxHandSize = 10;
-  const [handSize, setHandSize] = useState(8);
+  //discard pile
+  const [discardedCards, setDiscardedCards] = useState<CardType[]>([]);
+  //hand of cards
   const [handCards, setHandCards] = useState([
     {
       name: "Attack",
@@ -45,9 +44,8 @@ const PlayBoard = () => {
   ]);
 
   const cardClick = (id: number) => {
-    const newDiscardPile = [...discardPile];
+    const newDiscardPile = [...discardedCards];
     const clickedCard = handCards.find((card) => card.id === id);
-    console.log(clickedCard, "clik");
     if (clickedCard) {
       if (clickedCard.name === "Attack") {
         setEnemyHp((enemyHp) => enemyHp - clickedCard.stats);
@@ -58,7 +56,7 @@ const PlayBoard = () => {
       //discard
       newDiscardPile.push(clickedCard);
     }
-    setDiscardPile(newDiscardPile);
+    setDiscardedCards(newDiscardPile);
     setHandCards((handCards) => handCards.filter((card) => card.id != id));
   };
 
@@ -67,12 +65,9 @@ const PlayBoard = () => {
       <Player hp={playerHp} block={playerBlock} />
       <Enemy hp={enemyHp} />
       <Hand cards={handCards} cardClick={cardClick} />
+      <DiscardPile cards={discardedCards} />
     </>
   );
 };
 
 export default PlayBoard;
-
-// click card
-// card gets put into discard pile
-// card effect occurs on enemy
