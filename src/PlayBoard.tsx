@@ -102,6 +102,10 @@ const PlayBoard = () => {
       <DrawDeck cards={deckCards} />
       <Player hp={playerHp} block={playerBlock} />
       <Enemy hp={enemyHp} block={enemyBlock} />
+      <button className="absolute right-2">
+        End Turn
+        <span className="block text-sm">or press e</span>
+      </button>
       <Hand cards={handCards} cardClick={cardClick} />
       <DiscardDeck cards={discardCards} />
     </>
