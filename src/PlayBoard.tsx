@@ -1,6 +1,6 @@
 import { useState } from "react";
-import Player from "./components/Player";
-import Enemy from "./components/Enemy";
+import Player from "./components/entities/Player";
+import Enemy from "./components/entities/Enemy";
 import Hand from "./components/Hand";
 import DiscardDeck from "./components/DiscardDeck";
 import DrawDeck from "./components/DrawDeck";
