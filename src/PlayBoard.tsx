@@ -10,6 +10,11 @@ type CardType = {
   stats: number;
 };
 
+//TODO emojis/card art
+//TODO draw pile
+//TODO turn system
+//TODO enemy intent
+
 const PlayBoard = () => {
   //player
   const [playerHp, setPlayerHp] = useState(50);
