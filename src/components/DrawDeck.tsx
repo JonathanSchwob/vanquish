@@ -1,15 +1,15 @@
-type DiscardPileProps = {
+type DrawDeckProps = {
   cards: { name: string; id: number; stats: number }[];
 };
 
-const DiscardPile = ({ cards }: DiscardPileProps) => {
+const DrawDeck = ({ cards }: DrawDeckProps) => {
   const numberOfCards = cards.length;
   return (
     <>
-      <span>Discard Pile</span>
+      <span>Draw Pile</span>
       <button>{numberOfCards}</button>
     </>
   );
 };
 
-export default DiscardPile;
+export default DrawDeck;

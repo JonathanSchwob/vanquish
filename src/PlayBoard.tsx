@@ -2,7 +2,8 @@ import { useState } from "react";
 import Player from "./components/Player";
 import Enemy from "./components/Enemy";
 import Hand from "./components/Hand";
-import DiscardPile from "./components/DiscardPile";
+import DiscardDeck from "./components/DiscardDeck";
+import DrawDeck from "./components/DrawDeck";
 
 type CardType = {
   name: string;
@@ -11,20 +12,29 @@ type CardType = {
 };
 
 //TODO emojis/card art
-//TODO draw pile
+//TODO draw Deck
 //TODO turn system
 //TODO enemy intent
 
 const PlayBoard = () => {
-  //player
   const [playerHp, setPlayerHp] = useState(50);
   const [playerBlock, setPlayerBlock] = useState(0);
-  //enemy
   const [enemyHp, setEnemyHp] = useState(40);
   const [enemyBlock, setEnemyBlock] = useState(0);
-  //discard pile
-  const [discardedCards, setDiscardedCards] = useState<CardType[]>([]);
-  //hand of cards
+  const [exhaustCards, setExhaustCards] = useState([]);
+  const [discardCards, setDiscardCards] = useState<CardType[]>([]);
+  const [deckCards, setDeckCards] = useState([
+    {
+      name: "Defend",
+      id: 123124,
+      stats: 4,
+    },
+    {
+      name: "Attack",
+      id: 192123918092,
+      stats: 8,
+    },
+  ]);
   const [handCards, setHandCards] = useState([
     {
       name: "Attack",
@@ -49,9 +59,10 @@ const PlayBoard = () => {
   ]);
 
   const cardClick = (id: number) => {
-    const newDiscardPile = [...discardedCards];
+    const newDiscardDeck = [...discardCards];
     const clickedCard = handCards.find((card) => card.id === id);
     if (clickedCard) {
+      //play card
       if (clickedCard.name === "Attack") {
         setEnemyHp((enemyHp) => enemyHp - clickedCard.stats);
       }
@@ -59,18 +70,19 @@ const PlayBoard = () => {
         setPlayerBlock((playerBlock) => playerBlock + clickedCard.stats);
       }
       //discard
-      newDiscardPile.push(clickedCard);
+      newDiscardDeck.push(clickedCard);
     }
-    setDiscardedCards(newDiscardPile);
+    setDiscardCards(newDiscardDeck);
     setHandCards((handCards) => handCards.filter((card) => card.id != id));
   };
 
   return (
     <>
+      <DrawDeck cards={deckCards} />
       <Player hp={playerHp} block={playerBlock} />
       <Enemy hp={enemyHp} />
       <Hand cards={handCards} cardClick={cardClick} />
-      <DiscardPile cards={discardedCards} />
+      <DiscardDeck cards={discardCards} />
     </>
   );
 };
