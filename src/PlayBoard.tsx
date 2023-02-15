@@ -11,17 +11,22 @@ type CardType = {
   stats: number;
 };
 
-//TODO emojis/card art
-//TODO draw Deck
 //TODO turn system
+//TODO emojis/card art
 //TODO enemy intent
+//TODO draw deck features
+//TODO discard deck features
+//TODO pick phase
+//TODO find out if routing or conditional rendering or useEffects should be used to transition between PickPhase an PlayPhase
+//TODO stop hardcoding cards
+//TODO exhaust deck
 
 const PlayBoard = () => {
   const [playerHp, setPlayerHp] = useState(50);
   const [playerBlock, setPlayerBlock] = useState(0);
   const [enemyHp, setEnemyHp] = useState(40);
   const [enemyBlock, setEnemyBlock] = useState(0);
-  const [exhaustCards, setExhaustCards] = useState([]);
+  const [exhaustCards, setExhaustCards] = useState<CardType[]>([]);
   const [discardCards, setDiscardCards] = useState<CardType[]>([]);
   const [deckCards, setDeckCards] = useState([
     {
