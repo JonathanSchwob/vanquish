@@ -84,10 +84,9 @@ const PlayBoard = () => {
   ]);
   const [turnNumber, setTurnNumber] = useState(0);
 
-  const handlePlay = () => {
+  const handlePlay = (turn: boolean) => {
     if (playerHp <= 0) return;
-    // if (playerTurn) return;
-    console.log("hello");
+    if (turn) return;
     let i = 0;
     setTimeout(() => {
       setPlayerHp((playerHp) => playerHp + playerBlock - enemyMoves[i]);
@@ -106,9 +105,10 @@ const PlayBoard = () => {
 
   const endTurn = () => {
     if (playerHp <= 0) return;
-    setPlayerTurn(false);
+    const turn = false;
+    setPlayerTurn(turn);
     discardHand();
-    handlePlay();
+    handlePlay(turn);
   };
 
   const discardHand = () => {
