@@ -12,32 +12,18 @@ type CardType = {
   stats: number;
 };
 
-//TODO turn system
-//TODO enemy intent
-//TODO draw deck features
-//TODO discard deck features
-//TODO pick phase
-//TODO react router for PickPhase and PlayPhase
-//TODO stop hardcoding cards
-//TODO more cards
-//TODO exhaust deck
-//TODO more enemies - never ending?
-//TODO relic rewards
-//TODO characters
-//TODO emojis/card art
-//TODO high score leaderboard
-//TODO brainstorm altering the game design
-
 const PlayBoard = () => {
   const [playerTurn, setPlayerTurn] = useState(true);
   const [playerEnergy, setPlayerEnergy] = useState(3);
   const [playerHp, setPlayerHp] = useState(50);
   const [playerBlock, setPlayerBlock] = useState(0);
+  const [enemyMoves, setEnemyMoves] = useState([
+    10, 20, 2, 10, 2, 20, 10, 15, 20,
+  ]); //hardcode
   const [enemyHp, setEnemyHp] = useState(40);
   const [enemyBlock, setEnemyBlock] = useState(0);
-  const [enemyMoves, setEnemyMoves] = useState([8, 4, 2, 10, 2]);
-  const [exhaustCards, setExhaustCards] = useState<CardType[]>([]);
   const [discardCards, setDiscardCards] = useState<CardType[]>([]);
+  const [exhaustCards, setExhaustCards] = useState<CardType[]>([]);
   const [deckCards, setDeckCards] = useState([
     {
       name: "Defend",
@@ -49,7 +35,7 @@ const PlayBoard = () => {
       id: 192123918092,
       stats: 8,
     },
-  ]);
+  ]); //hardcode
   const [handCards, setHandCards] = useState([
     {
       name: "Attack",
@@ -81,19 +67,20 @@ const PlayBoard = () => {
       stats: 8,
       energy: 1,
     },
-  ]);
+  ]); //hardcode
   const [turnNumber, setTurnNumber] = useState(0);
 
   const handlePlay = (turn: boolean) => {
     if (playerHp <= 0) return;
     if (turn) return;
-    let i = 0;
     setTimeout(() => {
-      setPlayerHp((playerHp) => playerHp + playerBlock - enemyMoves[i]);
-      if (i >= 4) {
-        i = 0;
+      const remainingBlock = playerBlock - enemyMoves[turnNumber];
+      if (remainingBlock <= 0) {
+        setPlayerBlock(0);
+        setPlayerHp((playerHp) => playerHp + remainingBlock);
+      } else {
+        setPlayerBlock(remainingBlock);
       }
-      i++;
       startTurn();
     }, 1000);
   };
@@ -101,6 +88,7 @@ const PlayBoard = () => {
   const startTurn = () => {
     setPlayerTurn(true);
     setPlayerEnergy(3);
+    setTurnNumber((turnNumber) => turnNumber + 1);
   };
 
   const endTurn = () => {
@@ -147,7 +135,7 @@ const PlayBoard = () => {
       <span className="absolute left-7">Energy: {playerEnergy}</span>
       <DrawDeck cards={deckCards} />
       <Player hp={playerHp} block={playerBlock} />
-      <Enemy hp={enemyHp} block={enemyBlock} />
+      <Enemy hp={enemyHp} block={enemyBlock} move={enemyMoves[turnNumber]} />
       <EndTurn playerTurn={playerTurn} click={endTurn} />
       <Hand cards={handCards} cardClick={cardClick} />
       <DiscardDeck cards={discardCards} />
@@ -156,3 +144,20 @@ const PlayBoard = () => {
 };
 
 export default PlayBoard;
+
+//TODO turn system
+//TODO enemy intent
+//TODO draw deck features
+//TODO discard deck features
+//TODO pick phase
+//TODO react router for PickPhase and PlayPhase
+//TODO stop hardcoding cards
+//TODO more cards
+//TODO exhaust deck
+//TODO more enemies - never ending?
+//TODO relic rewards
+//TODO characters
+//TODO emojis/card art
+//TODO Auth, add a back end
+//TODO high score leaderboard
+//TODO brainstorm altering the game design
