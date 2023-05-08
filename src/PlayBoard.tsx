@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import Player from "./components/entities/Player";
 import Enemy from "./components/entities/Enemy";
 import Hand from "./components/Hand";
@@ -6,11 +6,26 @@ import DiscardDeck from "./components/DiscardDeck";
 import DrawDeck from "./components/DrawDeck";
 import EndTurn from "./components/EndTurn";
 
-type CardType = {
-  name: string;
+class Card {
+  name: "Attack" | "Defend";
   id: number;
   stats: number;
-};
+  deck: "hand" | "draw" | "discard";
+  energy: number;
+  constructor(
+    name: "Attack" | "Defend",
+    id: number,
+    stats: number,
+    deck: "hand" | "draw" | "discard" = "draw",
+    energy = 1
+  ) {
+    this.name = name;
+    this.id = id;
+    this.stats = stats;
+    this.deck = deck;
+    this.energy = energy;
+  }
+}
 
 const PlayBoard = () => {
   const [playerTurn, setPlayerTurn] = useState(true);
@@ -22,57 +37,25 @@ const PlayBoard = () => {
   ]); //hardcode
   const [enemyHp, setEnemyHp] = useState(40);
   const [enemyBlock, setEnemyBlock] = useState(0);
-  const [discardCards, setDiscardCards] = useState<CardType[]>([]);
-  const [exhaustCards, setExhaustCards] = useState<CardType[]>([]);
-  const [deckCards, setDeckCards] = useState([
-    {
-      name: "Defend",
-      id: 123124,
-      stats: 4,
-    },
-    {
-      name: "Attack",
-      id: 192123918092,
-      stats: 8,
-    },
-  ]); //hardcode
-  const [handCards, setHandCards] = useState([
-    {
-      name: "Attack",
-      id: 0,
-      stats: 8,
-      energy: 1,
-    },
-    {
-      name: "Attack",
-      id: 3,
-      stats: 8,
-      energy: 1,
-    },
-    {
-      name: "Defend",
-      id: 9,
-      stats: 4,
-      energy: 1,
-    },
-    {
-      name: "Defend",
-      id: 1231231,
-      stats: 4,
-      energy: 1,
-    },
-    {
-      name: "Attack",
-      id: 20,
-      stats: 8,
-      energy: 1,
-    },
-  ]); //hardcode
+
+  const stockCards = [];
+  for (let i = 0; i < 7; i++) {
+    const name = Math.random() > 0.5 ? "Attack" : "Defend";
+    const id = Math.floor(Math.random() * 10000);
+    const stats = name === "Attack" ? 8 : 4;
+    const deck = i < 5 ? "hand" : "draw";
+    stockCards.push(new Card(name, id, stats, deck));
+  }
+
+  const [cards, setCards] = useState<Card[]>(stockCards);
+
   const [turnNumber, setTurnNumber] = useState(0);
 
   const handlePlay = (turn: boolean) => {
     if (playerHp <= 0) return;
-    if (turn) return;
+    if (turn) {
+      return;
+    }
     setTimeout(() => {
       const remainingBlock = playerBlock - enemyMoves[turnNumber];
       if (remainingBlock <= 0) {
@@ -85,9 +68,49 @@ const PlayBoard = () => {
     }, 1000);
   };
 
+  const dealCards = () => {
+    let handCards = cards.filter((card) => card.deck === "hand");
+    //baseCase
+    if (handCards.length >= 5) return;
+
+    let drawCards = cards.filter((card) => card.deck === "draw");
+    let disCards = cards.filter((card) => card.deck === "discard");
+
+    const dealNum = 5 - handCards.length;
+    if (drawCards.length === 0) {
+      //put disCards into drawCards
+      disCards = disCards
+        .map((card) => {
+          card.deck = "draw";
+          return card;
+        })
+        //shuffle
+        .sort((card) => 0.5 - Math.random());
+    }
+    if (drawCards.length < dealNum) {
+      drawCards = drawCards.map((card) => {
+        card.deck = "hand";
+        return card;
+      });
+      setCards(handCards.concat(drawCards, disCards));
+      dealCards();
+      return;
+    } else {
+      drawCards = drawCards.map((card, i) => {
+        if (i < dealNum) {
+          card.deck = "hand";
+        }
+        return card;
+      });
+    }
+    setCards(handCards.concat(drawCards, disCards));
+    return;
+  };
+
   const startTurn = () => {
-    setPlayerTurn(true);
     setPlayerEnergy(3);
+    dealCards();
+    setPlayerTurn(true);
     setTurnNumber((turnNumber) => turnNumber + 1);
   };
 
@@ -100,18 +123,21 @@ const PlayBoard = () => {
   };
 
   const discardHand = () => {
-    const newDiscardDeck = [...discardCards];
-    newDiscardDeck.push(...handCards);
-    setHandCards([]);
-    setDiscardCards(newDiscardDeck);
+    const newCards = cards.slice().map((card) => {
+      const newCard = structuredClone(card);
+      if (newCard.deck === "hand") {
+        newCard.deck = "discard";
+      }
+      return newCard;
+    });
+    setCards(newCards);
   };
 
   const cardClick = (id: number) => {
     if (!playerTurn) return;
     if (playerHp <= 0) return;
     if (playerEnergy <= 0) return;
-    const newDiscardDeck = [...discardCards];
-    const clickedCard = handCards.find((card) => card.id === id);
+    const clickedCard = cards.find((card) => card.id === id);
 
     if (clickedCard) {
       //play card
@@ -122,23 +148,36 @@ const PlayBoard = () => {
         setPlayerBlock((playerBlock) => playerBlock + clickedCard.stats);
       }
       //discard
-      newDiscardDeck.push(clickedCard);
       setPlayerEnergy((playerEnergy) => playerEnergy - clickedCard.energy);
+    } else {
+      console.error("cardClick could not find card id=", id);
+      return;
     }
 
-    setHandCards((handCards) => handCards.filter((card) => card.id != id));
-    setDiscardCards(newDiscardDeck);
+    // discard clicked card
+    setCards((cards) => {
+      const newCards = cards.map((card) => {
+        if (card.id === id) {
+          card.deck = "discard";
+        }
+        return card;
+      });
+      return newCards;
+    });
   };
 
   return (
     <>
       <span className="absolute left-7">Energy: {playerEnergy}</span>
-      <DrawDeck cards={deckCards} />
+      <DrawDeck cards={cards.filter((card) => card.deck === "draw")} />
       <Player hp={playerHp} block={playerBlock} />
       <Enemy hp={enemyHp} block={enemyBlock} move={enemyMoves[turnNumber]} />
       <EndTurn playerTurn={playerTurn} click={endTurn} />
-      <Hand cards={handCards} cardClick={cardClick} />
-      <DiscardDeck cards={discardCards} />
+      <Hand
+        cards={cards.filter((card) => card.deck === "hand")}
+        cardClick={cardClick}
+      />
+      <DiscardDeck cards={cards.filter((card) => card.deck === "discard")} />
     </>
   );
 };
