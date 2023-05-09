@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Player from "./components/entities/Player";
 import Enemy from "./components/entities/Enemy";
 import Hand from "./components/Hand";
@@ -10,36 +10,20 @@ type CardType = {
   name: string;
   id: number;
   stats: number;
+  energy: number;
 };
 
-const PlayBoard = () => {
-  const [playerTurn, setPlayerTurn] = useState(true);
-  const [playerEnergy, setPlayerEnergy] = useState(3);
-  const [playerHp, setPlayerHp] = useState(50);
-  const [playerBlock, setPlayerBlock] = useState(0);
-  const [enemyMoves, setEnemyMoves] = useState([
-    10, 20, 2, 10, 2, 20, 10, 15, 20,
-  ]); //hardcode
-  const [enemyHp, setEnemyHp] = useState(40);
-  const [enemyBlock, setEnemyBlock] = useState(0);
-  const [discardCards, setDiscardCards] = useState<CardType[]>([]);
-  const [exhaustCards, setExhaustCards] = useState<CardType[]>([]);
-  const [deckCards, setDeckCards] = useState([
-    {
-      name: "Defend",
-      id: 123124,
-      stats: 4,
-    },
+const initializeDeck = () => {
+  const starterDeck = [
     {
       name: "Attack",
-      id: 192123918092,
+      id: 1,
       stats: 8,
+      energy: 1,
     },
-  ]); //hardcode
-  const [handCards, setHandCards] = useState([
     {
       name: "Attack",
-      id: 0,
+      id: 2,
       stats: 8,
       energy: 1,
     },
@@ -50,25 +34,83 @@ const PlayBoard = () => {
       energy: 1,
     },
     {
+      name: "Attack",
+      id: 4,
+      stats: 8,
+      energy: 1,
+    },
+    {
+      name: "Attack",
+      id: 5,
+      stats: 8,
+      energy: 1,
+    },
+    {
+      name: "Defend",
+      id: 6,
+      stats: 4,
+      energy: 1,
+    },
+    {
+      name: "Defend",
+      id: 7,
+      stats: 4,
+      energy: 1,
+    },
+    {
+      name: "Defend",
+      id: 8,
+      stats: 4,
+      energy: 1,
+    },
+    {
       name: "Defend",
       id: 9,
       stats: 4,
       energy: 1,
     },
-    {
-      name: "Defend",
-      id: 1231231,
-      stats: 4,
-      energy: 1,
-    },
-    {
-      name: "Attack",
-      id: 20,
-      stats: 8,
-      energy: 1,
-    },
-  ]); //hardcode
+  ];
+
+  return shuffle(starterDeck);
+};
+
+const shuffle = (deck: CardType[]) => {
+  let currentIndex = deck.length,
+    randomIndex;
+
+  // While there remain elements to shuffle.
+  while (currentIndex != 0) {
+    // Pick a remaining element.
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    // And swap it with the current element.
+    [deck[currentIndex], deck[randomIndex]] = [
+      deck[randomIndex],
+      deck[currentIndex],
+    ];
+  }
+
+  return deck;
+};
+
+const PlayBoard = () => {
+  const [deckCards, setDeckCards] = useState<CardType[]>(() =>
+    initializeDeck()
+  );
+  const [handCards, setHandCards] = useState<CardType[]>([]);
+  const [discardCards, setDiscardCards] = useState<CardType[]>([]);
+  const [exhaustCards, setExhaustCards] = useState<CardType[]>([]);
+  const [playerTurn, setPlayerTurn] = useState(true);
   const [turnNumber, setTurnNumber] = useState(0);
+  const [playerEnergy, setPlayerEnergy] = useState(3);
+  const [playerHp, setPlayerHp] = useState(50);
+  const [playerBlock, setPlayerBlock] = useState(0);
+  const [enemyMoves, setEnemyMoves] = useState([
+    10, 20, 2, 10, 2, 20, 10, 15, 20,
+  ]);
+  const [enemyHp, setEnemyHp] = useState(40);
+  const [enemyBlock, setEnemyBlock] = useState(0);
 
   const handlePlay = (turn: boolean) => {
     if (playerHp <= 0) return;
@@ -98,6 +140,8 @@ const PlayBoard = () => {
     discardHand();
     handlePlay(turn);
   };
+
+  const dealHand = () => {};
 
   const discardHand = () => {
     const newDiscardDeck = [...discardCards];
