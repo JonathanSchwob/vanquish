@@ -13,87 +13,6 @@ type CardType = {
   energy: number;
 };
 
-const initializeDeck = () => {
-  const starterDeck = [
-    {
-      name: "Attack",
-      id: 1,
-      stats: 8,
-      energy: 1,
-    },
-    {
-      name: "Attack",
-      id: 2,
-      stats: 8,
-      energy: 1,
-    },
-    {
-      name: "Attack",
-      id: 3,
-      stats: 8,
-      energy: 1,
-    },
-    {
-      name: "Attack",
-      id: 4,
-      stats: 8,
-      energy: 1,
-    },
-    {
-      name: "Attack",
-      id: 5,
-      stats: 8,
-      energy: 1,
-    },
-    {
-      name: "Defend",
-      id: 6,
-      stats: 4,
-      energy: 1,
-    },
-    {
-      name: "Defend",
-      id: 7,
-      stats: 4,
-      energy: 1,
-    },
-    {
-      name: "Defend",
-      id: 8,
-      stats: 4,
-      energy: 1,
-    },
-    {
-      name: "Defend",
-      id: 9,
-      stats: 4,
-      energy: 1,
-    },
-  ];
-
-  return shuffle(starterDeck);
-};
-
-const shuffle = (deck: CardType[]) => {
-  let currentIndex = deck.length,
-    randomIndex;
-
-  // While there remain elements to shuffle.
-  while (currentIndex != 0) {
-    // Pick a remaining element.
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex--;
-
-    // And swap it with the current element.
-    [deck[currentIndex], deck[randomIndex]] = [
-      deck[randomIndex],
-      deck[currentIndex],
-    ];
-  }
-
-  return deck;
-};
-
 const PlayBoard = () => {
   const [deckCards, setDeckCards] = useState<CardType[]>(() =>
     initializeDeck()
@@ -111,6 +30,87 @@ const PlayBoard = () => {
   ]);
   const [enemyHp, setEnemyHp] = useState(40);
   const [enemyBlock, setEnemyBlock] = useState(0);
+
+  const initializeDeck = () => {
+    const starterDeck = [
+      {
+        name: "Attack",
+        id: 1,
+        stats: 8,
+        energy: 1,
+      },
+      {
+        name: "Attack",
+        id: 2,
+        stats: 8,
+        energy: 1,
+      },
+      {
+        name: "Attack",
+        id: 3,
+        stats: 8,
+        energy: 1,
+      },
+      {
+        name: "Attack",
+        id: 4,
+        stats: 8,
+        energy: 1,
+      },
+      {
+        name: "Attack",
+        id: 5,
+        stats: 8,
+        energy: 1,
+      },
+      {
+        name: "Defend",
+        id: 6,
+        stats: 4,
+        energy: 1,
+      },
+      {
+        name: "Defend",
+        id: 7,
+        stats: 4,
+        energy: 1,
+      },
+      {
+        name: "Defend",
+        id: 8,
+        stats: 4,
+        energy: 1,
+      },
+      {
+        name: "Defend",
+        id: 9,
+        stats: 4,
+        energy: 1,
+      },
+    ];
+
+    return shuffle(starterDeck);
+  };
+
+  const shuffle = (deck: CardType[]) => {
+    let currentIndex = deck.length,
+      randomIndex;
+
+    // While there remain elements to shuffle.
+    while (currentIndex != 0) {
+      // Pick a remaining element.
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+
+      // And swap it with the current element.
+      [deck[currentIndex], deck[randomIndex]] = [
+        deck[randomIndex],
+        deck[currentIndex],
+      ];
+    }
+
+    return deck;
+  };
 
   const handlePlay = (turn: boolean) => {
     if (playerHp <= 0) return;
