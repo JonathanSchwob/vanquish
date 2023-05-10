@@ -95,9 +95,7 @@ const shuffle = (deck: CardType[]) => {
 };
 
 const PlayBoard = () => {
-  const [deckCards, setDeckCards] = useState<CardType[]>(() =>
-    initializeDeck()
-  );
+  const [deckCards, setDeckCards] = useState<CardType[]>(initializeDeck());
   const [handCards, setHandCards] = useState<CardType[]>([]);
   const [discardCards, setDiscardCards] = useState<CardType[]>([]);
   const [exhaustCards, setExhaustCards] = useState<CardType[]>([]);
@@ -140,8 +138,6 @@ const PlayBoard = () => {
     discardHand();
     handlePlay(turn);
   };
-
-  const dealHand = () => {};
 
   const discardHand = () => {
     const newDiscardDeck = [...discardCards];
