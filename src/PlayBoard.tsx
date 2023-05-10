@@ -135,7 +135,6 @@ const PlayBoard = () => {
       } else {
         setPlayerBlock(remainingBlock);
       }
-      dealHand();
       startTurn();
     }, 1000);
   };
@@ -144,6 +143,7 @@ const PlayBoard = () => {
     setPlayerTurn(true);
     setPlayerEnergy(3);
     setTurnNumber((turnNumber) => turnNumber + 1);
+    dealHand();
   };
 
   const endTurn = () => {
@@ -154,7 +154,7 @@ const PlayBoard = () => {
 
   const dealHand = () => {
     const newDeckCards = [...deckCards];
-    const newHand = [...handCards];
+    const newHand = [];
 
     // deal 5 cards
     for (let i = 0; i < 5; i++) {
@@ -172,8 +172,8 @@ const PlayBoard = () => {
   };
 
   const transferDiscardToDraw = () => {
-    const newDiscardDeck = shuffle([...discardCards]);
-    setDeckCards(newDiscardDeck);
+    const newDeckCards = shuffle([...discardCards]);
+    setDiscardCards([]);
   };
 
   const discardHand = () => {

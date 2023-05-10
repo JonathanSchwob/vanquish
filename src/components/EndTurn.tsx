@@ -8,7 +8,7 @@ const EndTurn = ({ click, playerTurn }: EndTurnProps) => {
     return (
       <button onClick={() => click()} className="absolute right-2">
         End Turn
-        <span className="block text-sm">or press e</span>
+        {/* <span className="block text-sm">or press e</span> */}
       </button>
     );
   } else {
