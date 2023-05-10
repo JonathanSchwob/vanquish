@@ -96,7 +96,7 @@ const shuffle = (deck: CardType[]) => {
 
 const PlayBoard = () => {
   const [deckCards, setDeckCards] = useState<CardType[]>(initializeDeck());
-  const [handCards, setHandCards] = useState<CardType[]>([]);
+  const [handCards, setHandCards] = useState<CardType[]>(initializeHand());
   const [discardCards, setDiscardCards] = useState<CardType[]>([]);
   const [exhaustCards, setExhaustCards] = useState<CardType[]>([]);
   const [playerTurn, setPlayerTurn] = useState(true);
@@ -109,6 +109,13 @@ const PlayBoard = () => {
   ]);
   const [enemyHp, setEnemyHp] = useState(40);
   const [enemyBlock, setEnemyBlock] = useState(0);
+
+  function initializeHand() {
+    const newDeckCards = [...deckCards];
+    const newHandCards = newDeckCards.splice(-5);
+    // setDeckCards(newDeckCards);
+    return newHandCards;
+  }
 
   const handlePlay = (turn: boolean) => {
     if (playerHp <= 0) return;
