@@ -69,6 +69,12 @@ const initializeDeck = () => {
       stats: 4,
       energy: 1,
     },
+    {
+      name: "Defend",
+      id: 10,
+      stats: 4,
+      energy: 1,
+    },
   ];
 
   return shuffle(starterDeck);
@@ -98,19 +104,19 @@ const PlayBoard = () => {
   const [deckCards, setDeckCards] = useState<CardType[]>([]);
   const [handCards, setHandCards] = useState<CardType[]>([]);
   const [discardCards, setDiscardCards] = useState<CardType[]>([]);
-  const [exhaustCards, setExhaustCards] = useState<CardType[]>([]);
-  const [playerTurn, setPlayerTurn] = useState(true);
+  // const [exhaustCards, setExhaustCards] = useState<CardType[]>([]); // todo
   const [turnNumber, setTurnNumber] = useState(0);
-  const [playerEnergy, setPlayerEnergy] = useState(3);
+  const [playerTurn, setPlayerTurn] = useState(true);
   const [playerHp, setPlayerHp] = useState(50);
   const [playerBlock, setPlayerBlock] = useState(0);
+  const [playerEnergy, setPlayerEnergy] = useState(3);
+  const [enemyHp, setEnemyHp] = useState(40);
+  const [enemyBlock, setEnemyBlock] = useState(0);
   const [enemyMoves, setEnemyMoves] = useState([
     10, 20, 2, 10, 2, 20, 10, 15, 20,
   ]);
-  const [enemyHp, setEnemyHp] = useState(40);
-  const [enemyBlock, setEnemyBlock] = useState(0);
 
-  //initialize deck and hand at start of the first battle
+  // shuffle the starter deck and draw hand at start of the first battle
   useEffect(() => {
     const initialDeck = initializeDeck();
     const initialHand = initialDeck.splice(-5);
@@ -119,8 +125,8 @@ const PlayBoard = () => {
   }, []);
 
   const handlePlay = (turn: boolean) => {
-    if (playerHp <= 0) return;
-    if (turn) return;
+    if (playerHp <= 0) return console.error("player is dead");
+    if (turn) return console.error("still player turn"); // redundant source of truth with playerTurn
     setTimeout(() => {
       const remainingBlock = playerBlock - enemyMoves[turnNumber];
       if (remainingBlock <= 0) {
@@ -129,6 +135,7 @@ const PlayBoard = () => {
       } else {
         setPlayerBlock(remainingBlock);
       }
+      dealHand();
       startTurn();
     }, 1000);
   };
@@ -140,11 +147,33 @@ const PlayBoard = () => {
   };
 
   const endTurn = () => {
-    if (playerHp <= 0) return;
-    const turn = false;
-    setPlayerTurn(turn);
+    if (playerHp <= 0) return console.error("player is dead");
     discardHand();
-    handlePlay(turn);
+    handlePlay(false);
+  };
+
+  const dealHand = () => {
+    const newDeckCards = [...deckCards];
+    const newHand = [...handCards];
+
+    // deal 5 cards
+    for (let i = 0; i < 5; i++) {
+      // if no more cards are in drawDeck
+      if (newDeckCards.length === 0) {
+        transferDiscardToDraw();
+        i--;
+      } else if (newHand.length < 10) {
+        newHand.push(newDeckCards.pop());
+      }
+    }
+
+    setDeckCards(newDeckCards);
+    setHandCards(newHand);
+  };
+
+  const transferDiscardToDraw = () => {
+    const newDiscardDeck = shuffle([...discardCards]);
+    setDeckCards(newDiscardDeck);
   };
 
   const discardHand = () => {
@@ -193,6 +222,8 @@ const PlayBoard = () => {
 
 export default PlayBoard;
 
+//TODO: add max hand capacity of 10 to dealHand()
+//TODO: add out of energy notice
 //TODO turn system
 //TODO enemy intent
 //TODO draw deck features
