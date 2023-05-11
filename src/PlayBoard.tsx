@@ -63,24 +63,24 @@ const initializeDeck = () => {
       stats: 4,
       energy: 1,
     },
-    // {
-    //   name: "Defend",
-    //   id: 9,
-    //   stats: 4,
-    //   energy: 1,
-    // },
-    // {
-    //   name: "Defend",
-    //   id: 10,
-    //   stats: 4,
-    //   energy: 1,
-    // },
+    {
+      name: "Defend",
+      id: 9,
+      stats: 4,
+      energy: 1,
+    },
+    {
+      name: "Defend",
+      id: 10,
+      stats: 4,
+      energy: 1,
+    },
   ];
 
-  return shuffle(starterDeck);
+  return shuffle(starterDeck, "starter");
 };
 
-const shuffle = (deck: CardType[]) => {
+const shuffle = (deck: CardType[], name: string) => {
   let currentIndex = deck.length,
     randomIndex;
 
@@ -96,7 +96,7 @@ const shuffle = (deck: CardType[]) => {
       deck[currentIndex],
     ];
   }
-  console.log(deck, "shuffled");
+  console.log(deck, name, "shuffled");
   return deck;
 };
 
@@ -125,7 +125,10 @@ const PlayBoard = () => {
   }, []);
 
   useEffect(() => {
-    if (playerTurn === false) handlePlay();
+    if (playerTurn === false) {
+      console.log("starting enemy turn");
+      handlePlay();
+    }
   }, [playerTurn]);
 
   const endTurn = () => {
@@ -162,33 +165,21 @@ const PlayBoard = () => {
 
   const dealHand = () => {
     const newDeckCards = [...deckCards];
+    console.log(newDeckCards, "newDeckCards");
     const newHand = [];
-    if (newDeckCards.length === 0) transferDiscardToDraw();
     // deal 5 cards
     for (let i = 0; i < 5; i++) {
-      // if no more cards are in drawDeck
+      // if no more cards are in drawDeck, transfer all discardCards to drawDeck
       if (newDeckCards.length === 0) {
-        transferDiscardToDraw();
-        i--;
-      } else if (newHand.length < 10) {
-        newHand.push(newDeckCards.pop());
+        newDeckCards.push(...discardCards);
+        setDiscardCards([]);
+        setDeckCards(newDeckCards);
       }
+      newHand.push(newDeckCards.pop());
     }
+
     setDeckCards(newDeckCards);
     setHandCards(newHand);
-  };
-
-  const transferDiscardToDraw = () => {
-    if (discardCards.length === 0) {
-      return console.error("no cards in discard pile");
-    }
-    if (deckCards.length === 0) {
-      const newDiscardCards = [...discardCards];
-      const newDeckCards = shuffle(newDiscardCards);
-
-      setDiscardCards([]);
-      setDeckCards(newDeckCards);
-    }
   };
 
   const cardClick = (id: number) => {
