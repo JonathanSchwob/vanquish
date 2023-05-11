@@ -5,8 +5,9 @@ type PlayerProps = {
 
 const Player = ({ hp, block }: PlayerProps) => {
   return (
-    <div className="inline-block p-8">
-      <div>{hp}</div>
+    <div className="inline-block p-10">
+      <div>Player</div>
+      <div>HP: {hp}</div>
       <div>Block: {block}</div>
     </div>
   );

@@ -124,9 +124,26 @@ const PlayBoard = () => {
     setHandCards(initialHand);
   }, []);
 
-  const handlePlay = (turn: boolean) => {
+  const endTurn = () => {
     if (playerHp <= 0) return console.error("player is dead");
-    if (turn) return console.error("still player turn"); // redundant source of truth with playerTurn
+    // discard hand
+    const newDiscardCards = [...discardCards];
+    console.log(handCards, "handCards");
+    console.log(newDiscardCards, "newDiscardCards BEFORE");
+    newDiscardCards.push(...handCards);
+    console.log(newDiscardCards, "newDiscardCards AFTER");
+    setHandCards([]);
+    setDiscardCards(newDiscardCards);
+    setPlayerTurn(false);
+  };
+
+  useEffect(() => {
+    if (playerTurn === false) handlePlay();
+  }, [playerTurn]);
+
+  const handlePlay = () => {
+    if (playerHp <= 0) return console.error("player is dead");
+    if (playerTurn) return console.error("still player turn");
     setTimeout(() => {
       const remainingBlock = playerBlock - enemyMoves[turnNumber];
       if (remainingBlock <= 0) {
@@ -135,7 +152,6 @@ const PlayBoard = () => {
       } else {
         setPlayerBlock(remainingBlock);
       }
-      dealHand();
       startTurn();
     }, 1000);
   };
@@ -144,17 +160,12 @@ const PlayBoard = () => {
     setPlayerTurn(true);
     setPlayerEnergy(3);
     setTurnNumber((turnNumber) => turnNumber + 1);
-  };
-
-  const endTurn = () => {
-    if (playerHp <= 0) return console.error("player is dead");
-    discardHand();
-    handlePlay(false);
+    dealHand();
   };
 
   const dealHand = () => {
     const newDeckCards = [...deckCards];
-    const newHand = [...handCards];
+    const newHand = [];
 
     // deal 5 cards
     for (let i = 0; i < 5; i++) {
@@ -172,15 +183,10 @@ const PlayBoard = () => {
   };
 
   const transferDiscardToDraw = () => {
-    const newDiscardDeck = shuffle([...discardCards]);
-    setDeckCards(newDiscardDeck);
-  };
-
-  const discardHand = () => {
-    const newDiscardDeck = [...discardCards];
-    newDiscardDeck.push(...handCards);
-    setHandCards([]);
-    setDiscardCards(newDiscardDeck);
+    if (discardCards.length === 0) return;
+    const newDeckCards = shuffle([...discardCards]);
+    setDiscardCards([]);
+    setDeckCards(newDeckCards);
   };
 
   const cardClick = (id: number) => {
