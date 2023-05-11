@@ -96,7 +96,7 @@ const shuffle = (deck: CardType[]) => {
       deck[currentIndex],
     ];
   }
-
+  console.log(deck, "shuffled");
   return deck;
 };
 
@@ -124,22 +124,19 @@ const PlayBoard = () => {
     setHandCards(initialHand);
   }, []);
 
+  useEffect(() => {
+    if (playerTurn === false) handlePlay();
+  }, [playerTurn]);
+
   const endTurn = () => {
     if (playerHp <= 0) return console.error("player is dead");
     // discard hand
     const newDiscardCards = [...discardCards];
-    console.log(handCards, "handCards");
-    console.log(newDiscardCards, "newDiscardCards BEFORE");
     newDiscardCards.push(...handCards);
-    console.log(newDiscardCards, "newDiscardCards AFTER");
     setHandCards([]);
     setDiscardCards(newDiscardCards);
     setPlayerTurn(false);
   };
-
-  useEffect(() => {
-    if (playerTurn === false) handlePlay();
-  }, [playerTurn]);
 
   const handlePlay = () => {
     if (playerHp <= 0) return console.error("player is dead");
@@ -157,16 +154,17 @@ const PlayBoard = () => {
   };
 
   const startTurn = () => {
-    setPlayerTurn(true);
     setPlayerEnergy(3);
     setTurnNumber((turnNumber) => turnNumber + 1);
     dealHand();
+    setPlayerTurn(true);
   };
 
   const dealHand = () => {
     const newDeckCards = [...deckCards];
     const newHand = [];
-
+    console.log(newDeckCards, "newDeckCards");
+    if (newDeckCards.length === 0) transferDiscardToDraw();
     // deal 5 cards
     for (let i = 0; i < 5; i++) {
       // if no more cards are in drawDeck
@@ -177,23 +175,30 @@ const PlayBoard = () => {
         newHand.push(newDeckCards.pop());
       }
     }
+    console.log(newDeckCards, "newDeckCards after");
 
     setDeckCards(newDeckCards);
     setHandCards(newHand);
   };
 
   const transferDiscardToDraw = () => {
-    if (discardCards.length === 0) return;
-    const newDeckCards = shuffle([...discardCards]);
-    setDiscardCards([]);
-    setDeckCards(newDeckCards);
+    if (discardCards.length === 0) {
+      return console.error("no cards in discard pile");
+    }
+    if (deckCards.length === 0) {
+      const newDiscardCards = [...discardCards];
+      const newDeckCards = shuffle(newDiscardCards);
+
+      setDiscardCards([]);
+      setDeckCards(newDeckCards);
+    }
   };
 
   const cardClick = (id: number) => {
     if (!playerTurn) return;
     if (playerHp <= 0) return;
     if (playerEnergy <= 0) return;
-    const newDiscardDeck = [...discardCards];
+    const newDiscardCards = [...discardCards];
     const clickedCard = handCards.find((card) => card.id === id);
 
     if (clickedCard) {
@@ -205,12 +210,12 @@ const PlayBoard = () => {
         setPlayerBlock((playerBlock) => playerBlock + clickedCard.stats);
       }
       //discard
-      newDiscardDeck.push(clickedCard);
+      newDiscardCards.push(clickedCard);
       setPlayerEnergy((playerEnergy) => playerEnergy - clickedCard.energy);
     }
 
     setHandCards((handCards) => handCards.filter((card) => card.id != id));
-    setDiscardCards(newDiscardDeck);
+    setDiscardCards(newDiscardCards);
   };
 
   return (
