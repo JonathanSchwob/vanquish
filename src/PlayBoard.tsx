@@ -63,18 +63,18 @@ const initializeDeck = () => {
       stats: 4,
       energy: 1,
     },
-    {
-      name: "Defend",
-      id: 9,
-      stats: 4,
-      energy: 1,
-    },
-    {
-      name: "Defend",
-      id: 10,
-      stats: 4,
-      energy: 1,
-    },
+    // {
+    //   name: "Defend",
+    //   id: 9,
+    //   stats: 4,
+    //   energy: 1,
+    // },
+    // {
+    //   name: "Defend",
+    //   id: 10,
+    //   stats: 4,
+    //   energy: 1,
+    // },
   ];
 
   return shuffle(starterDeck);
@@ -163,7 +163,6 @@ const PlayBoard = () => {
   const dealHand = () => {
     const newDeckCards = [...deckCards];
     const newHand = [];
-    console.log(newDeckCards, "newDeckCards");
     if (newDeckCards.length === 0) transferDiscardToDraw();
     // deal 5 cards
     for (let i = 0; i < 5; i++) {
@@ -175,8 +174,6 @@ const PlayBoard = () => {
         newHand.push(newDeckCards.pop());
       }
     }
-    console.log(newDeckCards, "newDeckCards after");
-
     setDeckCards(newDeckCards);
     setHandCards(newHand);
   };
