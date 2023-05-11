@@ -69,12 +69,6 @@ const initializeDeck = () => {
       stats: 4,
       energy: 1,
     },
-    {
-      name: "Defend",
-      id: 10,
-      stats: 4,
-      energy: 1,
-    },
   ];
 
   return shuffle(starterDeck, "starter");
@@ -96,7 +90,7 @@ const shuffle = (deck: CardType[], name: string) => {
       deck[currentIndex],
     ];
   }
-  console.log(deck, name, "shuffled");
+
   return deck;
 };
 
@@ -127,21 +121,23 @@ const PlayBoard = () => {
   useEffect(() => {
     if (playerTurn === false) {
       console.log("starting enemy turn");
-      handlePlay();
+      handleEnemyTurn();
     }
   }, [playerTurn]);
 
   const endTurn = () => {
     if (playerHp <= 0) return console.error("player is dead");
+    if (!playerTurn) return console.error("not player turn");
     // discard hand
     const newDiscardCards = [...discardCards];
     newDiscardCards.push(...handCards);
     setHandCards([]);
     setDiscardCards(newDiscardCards);
     setPlayerTurn(false);
+    // handleEnemyTurn();
   };
 
-  const handlePlay = () => {
+  const handleEnemyTurn = () => {
     if (playerHp <= 0) return console.error("player is dead");
     if (playerTurn) return console.error("still player turn");
     setTimeout(() => {
@@ -152,25 +148,26 @@ const PlayBoard = () => {
       } else {
         setPlayerBlock(remainingBlock);
       }
-      startTurn();
+      startPlayerTurn();
     }, 1000);
   };
 
-  const startTurn = () => {
+  const startPlayerTurn = () => {
     setPlayerEnergy(3);
     setTurnNumber((turnNumber) => turnNumber + 1);
     dealHand();
+    console.log("starting player turn");
     setPlayerTurn(true);
   };
 
   const dealHand = () => {
     const newDeckCards = [...deckCards];
-    console.log(newDeckCards, "newDeckCards");
     const newHand = [];
     // deal 5 cards
     for (let i = 0; i < 5; i++) {
       // if no more cards are in drawDeck, transfer all discardCards to drawDeck
       if (newDeckCards.length === 0) {
+        console.log("shuffling discard pile into draw pile");
         newDeckCards.push(...discardCards);
         setDiscardCards([]);
         setDeckCards(newDeckCards);
@@ -221,16 +218,11 @@ const PlayBoard = () => {
 
 export default PlayBoard;
 
-//TODO: add max hand capacity of 10 to dealHand()
-//TODO: add out of energy notice
-//TODO turn system
-//TODO enemy intent
-//TODO draw deck features
-//TODO discard deck features
-//TODO pick phase
-//TODO react router for PickPhase and PlayPhase
-//TODO stop hardcoding cards
-//TODO more cards
+//TODO add max hand capacity of 10 to dealHand()
+//TODO add out of energy notice
+//TODO click discard pile to show cards inside (ordered)
+//TODO click draw pile to show cards inside (unordered)
+//TODO add more cards
 //TODO exhaust deck
 //TODO more enemies - never ending?
 //TODO relic rewards
