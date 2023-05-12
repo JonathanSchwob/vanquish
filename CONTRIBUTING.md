@@ -3,7 +3,7 @@
 ## Gitflow: 
 https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow
 
-###The overall flow of Gitflow is:
+The overall flow of Gitflow is:
 
     A `develop` branch is created from `main`
     A `release` branch is created from `develop`
