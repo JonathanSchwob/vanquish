@@ -13,6 +13,7 @@ type CardType = {
   energy: number;
 };
 
+// Ironclad's starter deck - missing Bash.
 const initializeDeck = () => {
   const starterDeck = [
     {
@@ -110,7 +111,7 @@ const PlayBoard = () => {
     10, 20, 2, 10, 2, 20, 10, 15, 20,
   ]);
 
-  // shuffle the starter deck and draw hand at start of the first battle
+  // initialize the shuffled starter deck and draw hand at start of the first battle
   useEffect(() => {
     const initialDeck = initializeDeck();
     const initialHand = initialDeck.splice(-5);
@@ -118,6 +119,7 @@ const PlayBoard = () => {
     setHandCards(initialHand);
   }, []);
 
+  // listen for playerTurn change to begin the enemy's turn
   useEffect(() => {
     if (playerTurn === false) {
       console.log("starting enemy turn");
@@ -128,19 +130,22 @@ const PlayBoard = () => {
   const endTurn = () => {
     if (playerHp <= 0) return console.error("player is dead");
     if (!playerTurn) return console.error("not player turn");
-    // discard hand
+    // clone discard card pile
     const newDiscardCards = [...discardCards];
+    // add hand to discard pile
     newDiscardCards.push(...handCards);
     setHandCards([]);
     setDiscardCards(newDiscardCards);
     setPlayerTurn(false);
-    // handleEnemyTurn();
   };
 
   const handleEnemyTurn = () => {
     if (playerHp <= 0) return console.error("player is dead");
     if (playerTurn) return console.error("still player turn");
+
+    // pause for a moment
     setTimeout(() => {
+      // handle enemy attack,
       const remainingBlock = playerBlock - enemyMoves[turnNumber];
       if (remainingBlock <= 0) {
         setPlayerBlock(0);
@@ -149,7 +154,7 @@ const PlayBoard = () => {
         setPlayerBlock(remainingBlock);
       }
       startPlayerTurn();
-    }, 1000);
+    }, 750);
   };
 
   const startPlayerTurn = () => {
