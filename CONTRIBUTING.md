@@ -1,7 +1,7 @@
 # How to contribute
 
-## Gitflow
-
+## Gitflow: 
+https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow
 ```
 A develop branch is created from main
 A release branch is created from develop
