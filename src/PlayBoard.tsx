@@ -167,7 +167,7 @@ const PlayBoard = () => {
 
   const dealHand = () => {
     const newDeckCards = [...deckCards];
-    const newHand = [];
+    const newHandCards = [];
     // deal 5 cards
     for (let i = 0; i < 5; i++) {
       // if no more cards are in drawDeck, transfer all discardCards to drawDeck
@@ -177,11 +177,12 @@ const PlayBoard = () => {
         setDiscardCards([]);
         setDeckCards(newDeckCards);
       }
-      newHand.push(newDeckCards.pop());
+      // take cards from deck and put them into our hand
+      if (newDeckCards.length > 0) newHandCards.push(newDeckCards.pop()!);
     }
 
     setDeckCards(newDeckCards);
-    setHandCards(newHand);
+    setHandCards(newHandCards);
   };
 
   const cardClick = (id: number) => {
