@@ -178,11 +178,11 @@ const PlayBoard = () => {
         setDeckCards(newDeckCards);
       }
       // take cards from deck and put them into our hand
-      if (newDeckCards.length > 0) newHandCards.push(newDeckCards.pop()!);
+      if (newDeckCards.length > 0) newHandCards.push(newDeckCards.pop());
     }
 
     setDeckCards(newDeckCards);
-    setHandCards(newHandCards);
+    setHandCards(newHandCards as CardType[]);
   };
 
   const cardClick = (id: number) => {
