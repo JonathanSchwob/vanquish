@@ -1,6 +1,6 @@
 # vanquish
 
-sts style card game using react-typescript-vite-tailwind
+Slay the Spire style card game using React, Tailwind, Vite, & Typescript
 
 to run:
 
