@@ -5,7 +5,6 @@ import PlayBoard from "./PlayBoard";
 function App() {
   return (
     <div className="App">
-      {/* <PickBoard /> **coming soon**/}
       <PlayBoard />
     </div>
   );
