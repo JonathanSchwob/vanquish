@@ -5,6 +5,10 @@ import Hand from "./components/Hand";
 import DiscardDeck from "./components/DiscardDeck";
 import DrawDeck from "./components/DrawDeck";
 import EndTurn from "./components/EndTurn";
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Modal from '@mui/material/Modal';
 
 type CardType = {
   name: string;
@@ -95,6 +99,19 @@ const shuffle = (deck: CardType[], name: string) => {
   return deck;
 };
 
+const style = {
+  position: 'absolute' as 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+  color: 'black'
+};
+
 const PlayBoard = () => {
   const [deckCards, setDeckCards] = useState<CardType[]>([]);
   const [handCards, setHandCards] = useState<CardType[]>([]);
@@ -110,6 +127,8 @@ const PlayBoard = () => {
   const [enemyMoves, setEnemyMoves] = useState([
     10, 20, 2, 10, 2, 20, 10, 15, 20,
   ]);
+  const [modalOpen, setModalOpen] = useState(false);
+
 
   // initialize the shuffled starter deck and draw hand at start of the first battle
   useEffect(() => {
@@ -121,6 +140,7 @@ const PlayBoard = () => {
 
   // listen for playerTurn change to begin the enemy's turn
   useEffect(() => {
+    if (playerHp <= 0) setModalOpen(true)
     if (playerTurn === false) {
       console.log("starting enemy turn");
       handleEnemyTurn();
@@ -209,6 +229,27 @@ const PlayBoard = () => {
     setDiscardCards(newDiscardCards);
   };
 
+  const resetGame = () => {
+    console.error("still player turn");
+    console.log('reset game')
+    const initialDeck = initializeDeck();
+    const initialHand = initialDeck.splice(-5);
+    setDeckCards(initialDeck);
+    setHandCards(initialHand);
+    setDiscardCards([]);
+    setTurnNumber(0);
+    setPlayerTurn(true);
+    setPlayerHp(50);
+    setPlayerBlock(0);
+    setPlayerEnergy(3);
+    setEnemyHp(40);
+    setEnemyBlock(0);
+    setEnemyMoves([
+      10, 20, 2, 10, 2, 20, 10, 15, 20,
+    ]);
+    setModalOpen(false);
+  }
+
   return (
     <>
       <span className="absolute left-7">Energy: {playerEnergy}</span>
@@ -218,6 +259,22 @@ const PlayBoard = () => {
       <EndTurn playerTurn={playerTurn} click={endTurn} />
       <Hand cards={handCards} cardClick={cardClick} />
       <DiscardDeck cards={discardCards} />
+      <Modal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Game Over You lose!!!
+          </Typography>
+          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            Would You like to try again? 
+          </Typography>
+          <Button onClick={() => resetGame()}>Reset Game</Button>
+        </Box>
+      </Modal>
     </>
   );
 };
