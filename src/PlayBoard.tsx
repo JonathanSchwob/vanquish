@@ -5,10 +5,7 @@ import Hand from "./components/Hand";
 import DiscardDeck from "./components/DiscardDeck";
 import DrawDeck from "./components/DrawDeck";
 import EndTurn from "./components/EndTurn";
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import Modal from '@mui/material/Modal';
+
 
 type CardType = {
   name: string;
@@ -99,18 +96,6 @@ const shuffle = (deck: CardType[], name: string) => {
   return deck;
 };
 
-const style = {
-  position: 'absolute' as 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 4,
-  color: 'black'
-};
 
 const PlayBoard = () => {
   const [deckCards, setDeckCards] = useState<CardType[]>([]);
@@ -259,22 +244,40 @@ const PlayBoard = () => {
       <EndTurn playerTurn={playerTurn} click={endTurn} />
       <Hand cards={handCards} cardClick={cardClick} />
       <DiscardDeck cards={discardCards} />
-      <Modal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Game Over You lose!!!
-          </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            Would You like to try again? 
-          </Typography>
-          <Button onClick={() => resetGame()}>Reset Game</Button>
-        </Box>
-      </Modal>
+
+
+      {modalOpen ? (
+        <>
+          <div
+            className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none"
+          >
+            <div className="relative w-auto my-6 mx-auto max-w-3xl">
+              <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
+                <div className="flex items-start justify-between p-5 border-b border-solid border-slate-200 rounded-t">
+                  <h3 className="text-3xl font-semibold text-black text-center">
+                    Game Over You lose!!!
+                  </h3>
+                </div>
+                <div className="relative p-6 flex-auto">
+                  <p className="my-4 text-lg text-black">
+                    Would You like to try again?
+                  </p>
+                </div>
+                <div className="flex items-center justify-end p-6 border-t border-solid border-slate-200 rounded-b">
+                  <button
+                    className="bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                    type="button"
+                    onClick={() => resetGame()}
+                  >
+                    Reset Game
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
+        </>
+      ) : null}
     </>
   );
 };
