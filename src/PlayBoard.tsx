@@ -1,11 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useMemo } from "react";
 import Player from "./components/entities/Player";
 import Enemy from "./components/entities/Enemy";
 import Hand from "./components/Hand";
 import DiscardDeck from "./components/DiscardDeck";
 import DrawDeck from "./components/DrawDeck";
 import EndTurn from "./components/EndTurn";
-
 
 type CardType = {
   name: string;
@@ -96,10 +95,12 @@ const shuffle = (deck: CardType[], name: string) => {
   return deck;
 };
 
-
 const PlayBoard = () => {
-  const [deckCards, setDeckCards] = useState<CardType[]>([]);
-  const [handCards, setHandCards] = useState<CardType[]>([]);
+  const initialDeck = useMemo(initializeDeck, []);
+  const [deckCards, setDeckCards] = useState<CardType[]>(
+    initialDeck.slice(0, -5)
+  );
+  const [handCards, setHandCards] = useState<CardType[]>(initialDeck.slice(-5));
   const [discardCards, setDiscardCards] = useState<CardType[]>([]);
   // const [exhaustCards, setExhaustCards] = useState<CardType[]>([]); // todo
   const [turnNumber, setTurnNumber] = useState(0);
@@ -114,25 +115,20 @@ const PlayBoard = () => {
   ]);
   const [modalOpen, setModalOpen] = useState(false);
 
+  if (playerHp <= 0) setModalOpen(true);
 
-  // initialize the shuffled starter deck and draw hand at start of the first battle
-  useEffect(() => {
-    const initialDeck = initializeDeck();
-    const initialHand = initialDeck.splice(-5);
-    setDeckCards(initialDeck);
-    setHandCards(initialHand);
-  }, []);
+  // listen for player/enemy turn
 
-  // listen for playerTurn change to begin the enemy's turn
-  useEffect(() => {
-    if (playerHp <= 0) setModalOpen(true)
-    if (playerTurn === false) {
-      console.log("starting enemy turn");
-      handleEnemyTurn();
-    }
-  }, [playerTurn]);
+  const startPlayerTurn = () => {
+    console.log("starting player turn");
+    setPlayerTurn(true);
+    setPlayerEnergy(3);
+    setTurnNumber((turnNumber) => turnNumber + 1);
+    dealHand();
+  };
 
-  const endTurn = () => {
+  const endPlayerTurn = () => {
+    console.log("ending player turn");
     if (playerHp <= 0) return console.error("player is dead");
     if (!playerTurn) return console.error("not player turn");
     // clone discard card pile
@@ -141,13 +137,13 @@ const PlayBoard = () => {
     newDiscardCards.push(...handCards);
     setHandCards([]);
     setDiscardCards(newDiscardCards);
-    setPlayerTurn(false);
+    handleEnemyTurn();
   };
 
   const handleEnemyTurn = () => {
+    console.log("handling enemy turn");
     if (playerHp <= 0) return console.error("player is dead");
-    if (playerTurn) return console.error("still player turn");
-
+    setPlayerTurn(false);
     // pause for a moment
     setTimeout(() => {
       // handle enemy attack,
@@ -160,14 +156,6 @@ const PlayBoard = () => {
       }
       startPlayerTurn();
     }, 750);
-  };
-
-  const startPlayerTurn = () => {
-    setPlayerEnergy(3);
-    setTurnNumber((turnNumber) => turnNumber + 1);
-    dealHand();
-    console.log("starting player turn");
-    setPlayerTurn(true);
   };
 
   const dealHand = () => {
@@ -216,7 +204,7 @@ const PlayBoard = () => {
 
   const resetGame = () => {
     console.error("still player turn");
-    console.log('reset game')
+    console.log("reset game");
     const initialDeck = initializeDeck();
     const initialHand = initialDeck.splice(-5);
     setDeckCards(initialDeck);
@@ -229,11 +217,9 @@ const PlayBoard = () => {
     setPlayerEnergy(3);
     setEnemyHp(40);
     setEnemyBlock(0);
-    setEnemyMoves([
-      10, 20, 2, 10, 2, 20, 10, 15, 20,
-    ]);
+    setEnemyMoves([10, 20, 2, 10, 2, 20, 10, 15, 20]);
     setModalOpen(false);
-  }
+  };
 
   return (
     <>
@@ -241,16 +227,13 @@ const PlayBoard = () => {
       <DrawDeck cards={deckCards} />
       <Player hp={playerHp} block={playerBlock} />
       <Enemy hp={enemyHp} block={enemyBlock} move={enemyMoves[turnNumber]} />
-      <EndTurn playerTurn={playerTurn} click={endTurn} />
+      <EndTurn playerTurn={playerTurn} click={endPlayerTurn} />
       <Hand cards={handCards} cardClick={cardClick} />
       <DiscardDeck cards={discardCards} />
 
-
       {modalOpen ? (
         <>
-          <div
-            className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none"
-          >
+          <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
             <div className="relative w-auto my-6 mx-auto max-w-3xl">
               <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
                 <div className="flex items-start justify-between p-5 border-b border-solid border-slate-200 rounded-t">
