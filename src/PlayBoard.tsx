@@ -238,12 +238,12 @@ const PlayBoard = () => {
               <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
                 <div className="flex items-start justify-between p-5 border-b border-solid border-slate-200 rounded-t">
                   <h3 className="text-3xl font-semibold text-black text-center">
-                    Game Over You lose!!!
+                    Game Over
                   </h3>
                 </div>
                 <div className="relative p-6 flex-auto">
                   <p className="my-4 text-lg text-black">
-                    Would You like to try again?
+                    Try Again?
                   </p>
                 </div>
                 <div className="flex items-center justify-end p-6 border-t border-solid border-slate-200 rounded-b">
